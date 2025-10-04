@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finder Med - Trouver un Médecin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2c7fb8;
+      --secondary-color: #7fcdbb;
+      --accent-color: #edf8b1;
+      --text-color: #253238;
+      --light-gray: #f5f5f5;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-color);
+      background-color: var(--light-gray);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background-color: white;
+      padding: 20px;
+      box-shadow: var(--box-shadow);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 20px;
+    }
+    
+    .logo i {
+      font-size: 2rem;
+    }
+    
+    .search-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .search-box {
+      flex: 2;
+      min-width: 300px;
+      position: relative;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    
+    .search-box input:focus {
+      border-color: var(--primary-color);
+    }
+    
+    .filter-box {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .filter-box select {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      background-color: white;
+      outline: none;
+      cursor: pointer;
+    }
+    
+    .search-btn {
+      padding: 15px 25px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .search-btn:hover {
+      background-color: #1d5f8a;
+    }
+    
+    main {
+      flex: 1;
+      padding: 30px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    .doctors-list {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      overflow: hidden;
+    }
+    
+    .doctors-list h2 {
+      padding: 20px;
+      background-color: var(--primary-color);
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    .doctor-card {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .doctor-card:hover {
+      background-color: var(--accent-color);
+    }
+    
+    .doctor-card.active {
+      background-color: var(--accent-color);
+      border-left: 4px solid var(--primary-color);
+    }
+    
+    .doctor-name {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    
+    .doctor-specialty {
+      color: var(--primary-color);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    
+    .doctor-address {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .doctor-phone {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .doctor-availability {
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .route-btn {
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .route-btn:hover {
+      background-color: #5bbda5;
+    }
+    
+    .view-map-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .view-map-btn:hover {
+      background-color: #1d5f8a;
+    }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 30px;
+      color: var(--primary-color);
+    }
+    
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+    
+    .full-map-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 15px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 100;
+      transition: all 0.3s;
+    }
+    
+    .full-map-btn:hover {
+      background-color: #1d5f8a;
+      transform: translateY(-3px);
+    }
+    
+    @media (max-width: 768px) {
+      .search-container {
+        flex-direction: column;
+      }
+      
+      .search-box, .filter-box {
+        min-width: 100%;
+      }
+      
+      .full-map-btn {
+        bottom: 20px;
+        right: 20px;
+        padding: 12px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <i class="fas fa-stethoscope"></i>
+      <span>Finder Med</span>
+    </div>
+    
+    <div class="search-container">
+      <div class="search-box">
+        <input type="text" id="search" placeholder="Rechercher un médecin, une spécialité...">
+      </div>
+      
+      <div class="filter-box">
+        <select id="specialty-filter">
+          <option value="">Toutes les spécialités</option>
+          <option value="Généraliste">Généraliste</option>
+          <option value="Dentiste">Dentiste</option>
+          <option value="Cardiologue">Cardiologue</option>
+          <option value="Pédiatre">Pédiatre</option>
+          <option value="Dermatologue">Dermatologue</option>
+          <option value="Ophtalmologue">Ophtalmologue</option>
+        </select>
+      </div>
+      
+      <button class="search-btn" onclick="searchDoctors()">
+        <i class="fas fa-search"></i> Rechercher
+      </button>
+    </div>
+  </header>
+  
+  <main>
+    <div class="doctors-list">
+      <h2>Médecins à proximité</h2>
+      <div class="loading" id="loading">
+        <i class="fas fa-spinner fa-spin"></i> Chargement...
+      </div>
+      <div class="no-results" id="no-results">
+        <i class="fas fa-search"></i>
+        <p>Aucun médecin trouvé pour votre recherche.</p>
+      </div>
+      <div id="doctors-container">
+        <!-- Les cartes des médecins seront ajoutées ici dynamiquement -->
+      </div>
+    </div>
+  </main>
+  
+  <button class="full-map-btn" onclick="openFullMap()">
+    <i class="fas fa-map"></i> Voir la carte complète
+  </button>
+
+  <script>
+    // Données d'exemple : médecins
+    const doctors = [
+      { 
+        id: 1,
+        name: "Dr. Ahmed Benali", 
+        specialty: "Généraliste",
+        lat: 33.573, 
+        lon: -7.589, 
+        address: "Centre Médical Hassan II, Casablanca",
+        phone: "+212 5 22 45 67 89",
+        availability: "Lun-Ven: 8h-18h"
+      },
+      { 
+        id: 2,
+        name: "Dr. Fatima Zahra", 
+        specialty: "Dentiste",
+        lat: 33.575, 
+        lon: -7.595, 
+        address: "Clinique Sourire, Casablanca",
+        phone: "+212 5 22 34 56 78",
+        availability: "Lun-Sam: 9h-17h"
+      },
+      { 
+        id: 3,
+        name: "Dr. Karim Bensouda", 
+        specialty: "Cardiologue",
+        lat: 33.577, 
+        lon: -7.583, 
+        address: "Clinique du Cœur, Casablanca",
+        phone: "+212 5 22 78 90 12",
+        availability: "Lun-Ven: 9h-16h"
+      },
+      { 
+        id: 4,
+        name: "Dr. Leila Mansouri", 
+        specialty: "Pédiatre",
+        lat: 33.571, 
+        lon: -7.592, 
+        address: "Centre Médical Enfants, Casablanca",
+        phone: "+212 5 22 23 45 67",
+        availability: "Lun-Sam: 8h-17h"
+      },
+      { 
+        id: 5,
+        name: "Dr. Youssef Alaoui", 
+        specialty: "Dermatologue",
+        lat: 33.579, 
+        lon: -7.587, 
+        address: "Clinique de la Peau, Casablanca",
+        phone: "+212 5 22 56 78 90",
+        availability: "Lun-Ven: 10h-18h"
+      }
+    ];
+
+    let selectedDoctorId = null;
+
+    // Initialisation de l'application
+    function initApp() {
+      displayDoctors(doctors);
+      
+      // Recherche lors de la frappe dans la barre de recherche
+      document.getElementById('search').addEventListener('input', function() {
+        searchDoctors();
+      });
+      
+      // Recherche lors du changement de filtre
+      document.getElementById('specialty-filter').addEventListener('change', function() {
+        searchDoctors();
+      });
+    }
+
+    // Affichage des médecins dans la liste
+    function displayDoctors(doctorsToDisplay) {
+      const container = document.getElementById('doctors-container');
+      container.innerHTML = '';
+      
+      if (doctorsToDisplay.length === 0) {
+        document.getElementById('no-results').style.display = 'block';
+        return;
+      }
+      
+      document.getElementById('no-results').style.display = 'none';
+      
+      doctorsToDisplay.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'doctor-card';
+        if (doc.id === selectedDoctorId) {
+          card.classList.add('active');
+        }
+        
+        card.innerHTML = `
+          <div class="doctor-name">${doc.name}</div>
+          <div class="doctor-specialty">${doc.specialty}</div>
+          <div class="doctor-address"><i class="fas fa-map-marker-alt"></i> ${doc.address}</div>
+          <div class="doctor-phone"><i class="fas fa-phone"></i> ${doc.phone}</div>
+          <div class="doctor-availability"><i class="fas fa-clock"></i> ${doc.availability}</div>
+          <div class="action-buttons">
+            <button class="route-btn" onclick="openMapWithRoute(${doc.id})">
+              <i class="fas fa-route"></i> Itinéraire
+            </button>
+            <button class="view-map-btn" onclick="openMapWithDoctor(${doc.id})">
+              <i class="fas fa-map-marker-alt"></i> Voir sur la carte
+            </button>
+          </div>
+        `;
+        
+        card.addEventListener('click', () => {
+          selectDoctor(doc.id);
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Sélection d'un médecin
+    function selectDoctor(doctorId) {
+      selectedDoctorId = doctorId;
+      
+      // Mettre à jour l'affichage de la liste
+      document.querySelectorAll('.doctor-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      const selectedCard = document.querySelector(`.doctor-card:nth-child(${doctors.findIndex(d => d.id === doctorId) + 1})`);
+      if (selectedCard) {
+        selectedCard.classList.add('active');
+      }
+    }
+
+    // Recherche de médecins
+    function searchDoctors() {
+      const query = document.getElementById("search").value.toLowerCase();
+      const specialty = document.getElementById("specialty-filter").value;
+      
+      document.getElementById('loading').style.display = 'block';
+      
+      // Simulation d'un délai de chargement
+      setTimeout(() => {
+        const filteredDoctors = doctors.filter(doc => {
+          const matchesQuery = doc.name.toLowerCase().includes(query) || 
+                              doc.specialty.toLowerCase().includes(query) ||
+                              doc.address.toLowerCase().includes(query);
+          
+          const matchesSpecialty = !specialty || doc.specialty === specialty;
+          
+          return matchesQuery && matchesSpecialty;
+        });
+        
+        displayDoctors(filteredDoctors);
+        document.getElementById('loading').style.display = 'none';
+      }, 500);
+    }
+
+    // Ouvrir la carte complète
+    function openFullMap() {
+      // Sauvegarder les données des médecins dans le localStorage
+      localStorage.setItem('doctors', JSON.stringify(doctors));
+      localStorage.setItem('selectedDoctorId', selectedDoctorId || '');
+      
+      // Ouvrir la page de la carte
+      window.open('map.html', '_blank');
+    }
+
+    // Ouvrir la carte avec un itinéraire vers un médecin spécifique
+    function openMapWithRoute(doctorId) {
+      const doctor = doctors.find(d => d.id === doctorId);
+      if (doctor) {
+        // Sauvegarder les données
+        localStorage.setItem('doctors', JSON.stringify(doctors));
+        localStorage.setItem('selectedDoctorId', doctorId);
+        localStorage.setItem('showRoute', 'true');
+        
+        // Ouvrir la page de la carte
+        window.open('map.html', '_blank');
+      }
+    }
+
+    // Ouvrir la carte avec un médecin spécifique sélectionné
+    function openMapWithDoctor(doctorId) {
+      const doctor = doctors.find(d => d.id === doctorId);
+      if (doctor) {
+        // Sauvegarder les données
+        localStorage.setItem('doctors', JSON.stringify(doctors));
+        localStorage.setItem('selectedDoctorId', doctorId);
+        localStorage.setItem('showRoute', 'false');
+        
+        // Ouvrir la page de la carte
+        window.open('map.html', '_blank');
+      }
+    }
+
+    // Initialiser l'application au chargement
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
