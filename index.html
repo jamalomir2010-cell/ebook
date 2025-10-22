@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livres Électroniques Médicaux</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding-bottom: 70px;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #1e88e5;
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .app-name {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+        }
+        
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-badge.hidden {
+            display: none;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-radius: 20px;
+            padding: 8px 15px;
+        }
+        
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        
+        /* Main Content Styles */
+        main {
+            padding: 20px;
+            padding-bottom: 80px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #1e88e5;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        /* Books Grid */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .book-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .book-cover {
+            width: 100%;
+            height: 140px;
+            background-color: #e0e0e0;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .bookmark-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            color: #ffd700;
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            display: none;
+        }
+        
+        .bookmark-icon.active {
+            display: block;
+        }
+        
+        .new-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background-color: #ff4757;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .new-badge.active {
+            display: block;
+        }
+        
+        .book-info {
+            padding: 8px;
+        }
+        
+        .book-title {
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.3;
+            text-align: center;
+            height: 32px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        /* Category List */
+        .category-list {
+            display: block;
+        }
+        
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .category-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .category-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #1e88e5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+        }
+        
+        .category-info {
+            flex: 1;
+        }
+        
+        .category-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .category-count {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .category-arrow {
+            color: #999;
+        }
+        
+        /* Notification Popup - تم التعديل هنا */
+        .notification-popup {
+            display: none;
+            position: fixed; /* تغيير من absolute إلى fixed */
+            top: 45px; /* مسافة من الأعلى لتكون تحت الهيدر */
+            right: 5px; /* محاذاة مع الجرس */
+            width: 320px;
+            max-height: 400px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000; /* z-index أقل من الهيدر */
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .notification-header {
+            background-color: #1e88e5;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .notification-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            gap: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-book-cover {
+            width: 40px;
+            height: 52px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .notification-new-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4757;
+            color: white;
+            font-size: 8px;
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 8px;
+        }
+        
+        .notification-book-info {
+            flex: 1;
+        }
+        
+        .notification-book-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+        
+        .notification-time {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+            display: none;
+        }
+        
+        .no-results i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        .no-results h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .no-results p {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        /* No Bookmarks Message */
+        .no-bookmarks {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            display: none;
+        }
+        
+        .no-bookmarks i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .no-bookmarks h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #555;
+            font-weight: 600;
+        }
+        
+        .no-bookmarks p {
+            font-size: 15px;
+            color: #888;
+            line-height: 1.5;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        /* PDF Viewer Styles */
+        .pdf-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 2000;
+            flex-direction: column;
+        }
+        
+        .pdf-header {
+            background-color: #1e88e5;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .pdf-title {
+            font-size: 16px;
+            font-weight: 600;
+            flex: 1;
+            margin-right: 15px;
+        }
+        
+        .pdf-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .pdf-controls i {
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .pdf-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+        
+        /* Footer Navigation */
+        footer {
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            max-width: 480px;
+            margin: 0 auto;
+            height: 70px;
+        }
+        
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            height: 100%;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            flex: 1;
+            transition: color 0.3s;
+        }
+        
+        .nav-item.active {
+            color: #1e88e5;
+        }
+        
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        /* Shimmer Effect */
+        .shimmer-card {
+            background-color: #f6f7f8;
+            border-radius: 8px;
+            height: 190px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .shimmer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #f6f7f8 0%, #edeef1 50%, #f6f7f8 100%);
+            background-size: 800px 100%;
+            animation: shimmer 1.5s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -800px 0; }
+            100% { background-position: 800px 0; }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="app-name">Livres Médicaux</div>
+                <div class="header-icons">
+                    <div class="notification-bell" id="notificationBell">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge hidden" id="notificationBadge">0</div>
+                    </div>
+                </div>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Tapez le nom du livre que vous cherchez...">
+            </div>
+        </header>
+        
+        <main>
+            <!-- Home Page Content -->
+            <div id="homePage">
+                <h2 class="section-title">
+                    <button class="back-btn" id="backToCategories" style="display: none;">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <span id="pageTitle">Livres Récents</span>
+                </h2>
+                <div class="books-grid" id="booksGrid">
+                    <!-- Effet de chargement - 9 éléments shimmer -->
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                    <div class="shimmer-card"><div class="shimmer"></div></div>
+                </div>
+            </div>
+            
+            <!-- Category Page Content -->
+            <div id="categoryPage" style="display: none;">
+                <h2 class="section-title">
+                    <button class="back-btn" id="backToCategoriesFromList" style="display: none;">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <span id="categoryPageTitle">Spécialités Médicales</span>
+                </h2>
+                <div class="category-list" id="categoryList">
+                    <!-- Catégories seront chargées dynamiquement -->
+                </div>
+                <div class="books-grid" id="categoryBooksGrid" style="display: none;">
+                    <!-- Livres de catégorie spécifique -->
+                </div>
+            </div>
+            
+            <!-- Bookmarks Page Content -->
+            <div id="bookmarksPage" style="display: none;">
+                <h2 class="section-title">Mes Signets</h2>
+                <div class="books-grid" id="bookmarksGrid">
+                    <!-- Livres avec signets -->
+                </div>
+                <!-- Message pour aucun signet -->
+                <div class="no-bookmarks" id="noBookmarks">
+                    <i class="far fa-bookmark"></i>
+                    <h3>Aucun livre enregistré</h3>
+                    <p>Les livres que vous ajoutez à vos signets apparaîtront ici</p>
+                </div>
+            </div>
+            
+            <!-- Message aucun résultat -->
+            <div class="no-results" id="noResults">
+                <i class="fas fa-book-open"></i>
+                <h3>Aucun livre trouvé</h3>
+                <p>Aucun livre ne correspond à votre recherche</p>
+            </div>
+        </main>
+        
+        <!-- Footer Navigation -->
+        <footer>
+            <div class="nav-bar">
+                <div class="nav-item active" data-page="home">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span>Accueil</span>
+                </div>
+                <div class="nav-item" data-page="category">
+                    <i class="fas fa-th-large nav-icon"></i>
+                    <span>Spécialités</span>
+                </div>
+                <div class="nav-item" data-page="bookmarks">
+                    <i class="fas fa-bookmark nav-icon"></i>
+                    <span>Signets</span>
+                </div>
+            </div>
+        </footer>
+        
+        <!-- PDF Viewer -->
+        <div class="pdf-viewer" id="pdfViewer">
+            <div class="pdf-header">
+                <div class="pdf-title" id="pdfTitle">Livre PDF</div>
+                <div class="pdf-controls">
+                    <i class="far fa-bookmark" id="bookmarkPdf"></i>
+                    <i class="fas fa-times" id="closePdf"></i>
+                </div>
+            </div>
+            <iframe class="pdf-frame" id="pdfFrame" src=""></iframe>
+        </div>
+        
+        <!-- Notification Popup -->
+        <div class="notification-popup" id="notificationPopup">
+            <div class="notification-header">
+                <div class="notification-title">Nouveaux Livres</div>
+            </div>
+            <div class="notification-list" id="notificationList">
+                <!-- Les nouveaux livres seront affichés ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOYAQ6XMLYeqpn_JQwZUTZEMre5UX3NfU",
+            authDomain: "megastore-dc68d.firebaseapp.com",
+            databaseURL: "https://megastore-dc68d-default-rtdb.firebaseio.com",
+            projectId: "megastore-dc68d",
+            storageBucket: "megastore-dc68d.appspot.com",
+            messagingSenderId: "600548950505",
+            appId: "1:600548950505:web:08248cdb2a1d8e5b0dcb78",
+            measurementId: "G-RRL5NF4LGY"
+        };
+
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const booksGrid = document.getElementById('booksGrid');
+            const categoryList = document.getElementById('categoryList');
+            const categoryBooksGrid = document.getElementById('categoryBooksGrid');
+            const bookmarksGrid = document.getElementById('bookmarksGrid');
+            const pdfViewer = document.getElementById('pdfViewer');
+            const pdfFrame = document.getElementById('pdfFrame');
+            const pdfTitle = document.getElementById('pdfTitle');
+            const closePdf = document.getElementById('closePdf');
+            const bookmarkPdf = document.getElementById('bookmarkPdf');
+            const searchInput = document.getElementById('searchInput');
+            const noResults = document.getElementById('noResults');
+            const noBookmarks = document.getElementById('noBookmarks');
+            const notificationBell = document.getElementById('notificationBell');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const notificationPopup = document.getElementById('notificationPopup');
+            const notificationList = document.getElementById('notificationList');
+            const backToCategories = document.getElementById('backToCategories');
+            const backToCategoriesFromList = document.getElementById('backToCategoriesFromList');
+            const pageTitle = document.getElementById('pageTitle');
+            const categoryPageTitle = document.getElementById('categoryPageTitle');
+            
+            // Pages
+            const homePage = document.getElementById('homePage');
+            const categoryPage = document.getElementById('categoryPage');
+            const bookmarksPage = document.getElementById('bookmarksPage');
+            
+            let currentBook = null;
+            let allBooks = [];
+            let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || {};
+            let currentPage = 'home';
+            let searchTerm = '';
+            let newBooks = [];
+            let currentCategory = null;
+
+            // Liste des spécialités médicales (sans "Toutes les spécialités")
+            const medicalSpecialties = [
+                "Allergologie",
+                "Anatomo-pathologie",
+                "Anesthésie – Réanimation – Urgences",
+                "Biologie clinique – Examen de labo",
+                "Cancérologie",
+                "Cardiologie – Médecine vasculaire",
+                "Chirurgie générale",
+                "Chirurgie réparatrice et esthétique",
+                "Dentaire",
+                "Dermatologie",
+                "Diabétologie",
+                "Endocrinologie",
+                "Gériatrie – Gérontologie",
+                "Gynécologie – Obstétrique",
+                "Hématologie",
+                "Hépato – Gastro – Entérologie",
+                "Imagerie médicale",
+                "Infectiologie – Virologie – Bactériologie",
+                "Infirmières",
+                "Médecine générale",
+                "Médecine humanitaire",
+                "Médecine interne",
+                "Médecine légale – Droit médical",
+                "Médecine du travail",
+                "Neurologie",
+                "Nutrition – Diététique",
+                "Ophtalmologie",
+                "ORL",
+                "Orthopédie – Traumatologie",
+                "Paramédical",
+                "Pédiatrie",
+                "Pharmacie",
+                "Plaies & Cicatrisations",
+                "Pneumologie",
+                "Psychiatrie",
+                "Psychologie",
+                "Rhumatologie",
+                "Soins palliatifs – Douleur",
+                "Urologie – Néphrologie – Andrologie"
+            ];
+
+            // Initialiser lastVisit s'il n'existe pas
+            if (!localStorage.getItem('lastVisit')) {
+                localStorage.setItem('lastVisit', Date.now());
+            }
+
+            // Charger les livres
+            loadBooks();
+
+            // Vérifier périodiquement les livres الجديدة (toutes les 30 minutes)
+            setInterval(checkNewBooksStatus, 30 * 60 * 1000);
+
+            // Recherche en temps réel
+            searchInput.addEventListener('input', function() {
+                searchTerm = this.value.trim();
+                
+                if (searchTerm === '') {
+                    noResults.style.display = 'none';
+                    if (currentPage === 'home') {
+                        if (currentCategory) {
+                            const categoryBooks = allBooks.filter(book => 
+                                (book.category || 'Non classé') === currentCategory
+                            );
+                            displayBooksGrid(categoryBooks, booksGrid);
+                        } else {
+                            displayRecentBooks();
+                        }
+                    } else if (currentPage === 'category' && categoryBooksGrid.style.display === 'grid') {
+                        const categoryBooks = allBooks.filter(book => 
+                            (book.category || 'Non classé') === currentCategory
+                        );
+                        displayBooksGrid(categoryBooks, categoryBooksGrid);
+                    }
+                } else {
+                    filterBooks();
+                }
+            });
+
+            // Fermer le PDF
+            closePdf.addEventListener('click', function() {
+                pdfViewer.style.display = 'none';
+                pdfFrame.src = '';
+            });
+
+            // Gestion des signets
+            bookmarkPdf.addEventListener('click', function() {
+                if (currentBook) {
+                    toggleBookmark(currentBook.id);
+                }
+            });
+
+            // Notification Bell - Toggle popup
+            notificationBell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (notificationPopup.style.display === 'block') {
+                    notificationPopup.style.display = 'none';
+                } else {
+                    showNotificationPopup();
+                    notificationPopup.style.display = 'block';
+                    // Marquer les notifications comme vues
+                    markNotificationsAsSeen();
+                }
+            });
+
+            // Fermer la notification en cliquant à l'extérieur
+            document.addEventListener('click', function(e) {
+                if (!notificationPopup.contains(e.target) && !notificationBell.contains(e.target)) {
+                    notificationPopup.style.display = 'none';
+                }
+            });
+
+            // Bouton retour aux catégories (dans Home)
+            backToCategories.addEventListener('click', function() {
+                currentCategory = null;
+                backToCategories.style.display = 'none';
+                pageTitle.textContent = 'Livres Récents';
+                displayRecentBooks();
+            });
+
+            // Bouton retour aux catégories (dans Category page)
+            backToCategoriesFromList.addEventListener('click', function() {
+                showCategoryList();
+            });
+
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    switchPage(page);
+                });
+            });
+
+            function markNotificationsAsSeen() {
+                // Mettre à jour lastVisit pour marquer tous les livres actuels comme vus
+                localStorage.setItem('lastVisit', Date.now());
+                // Cacher le badge
+                notificationBadge.classList.add('hidden');
+                // Réinitialiser les nouveaux livres
+                newBooks = [];
+                // Recharger l'affichage pour mettre à jour les badges "Nouveau"
+                if (currentPage === 'home') {
+                    displayRecentBooks();
+                } else if (currentPage === 'category' && categoryBooksGrid.style.display === 'grid') {
+                    const categoryBooks = allBooks.filter(book => 
+                        (book.category || 'Non classé') === currentCategory
+                    );
+                    displayBooksGrid(categoryBooks, categoryBooksGrid);
+                }
+            }
+
+            function switchPage(page) {
+                currentCategory = null;
+                backToCategories.style.display = 'none';
+                backToCategoriesFromList.style.display = 'none';
+                
+                noResults.style.display = 'none';
+                
+                document.querySelectorAll('.nav-item').forEach(el => {
+                    el.classList.remove('active');
+                });
+                document.querySelector(`[data-page="${page}"]`).classList.add('active');
+                
+                homePage.style.display = 'none';
+                categoryPage.style.display = 'none';
+                bookmarksPage.style.display = 'none';
+                
+                currentPage = page;
+                
+                switch(page) {
+                    case 'home':
+                        homePage.style.display = 'block';
+                        pageTitle.textContent = 'Livres Récents';
+                        displayRecentBooks();
+                        break;
+                    case 'category':
+                        categoryPage.style.display = 'block';
+                        showCategoryList();
+                        break;
+                    case 'bookmarks':
+                        bookmarksPage.style.display = 'block';
+                        displayBookmarks();
+                        break;
+                }
+            }
+
+            function loadBooks() {
+                database.ref('books').once('value').then(snapshot => {
+                    const books = snapshot.val();
+                    allBooks = [];
+                    
+                    if (!books) {
+                        showNoResults(true);
+                        return;
+                    }
+
+                    Object.keys(books).forEach(key => {
+                        allBooks.push({
+                            id: key,
+                            ...books[key]
+                        });
+                    });
+
+                    allBooks.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    
+                    checkNewBooks();
+                    
+                    if (currentPage === 'home') {
+                        displayRecentBooks();
+                    } else if (currentPage === 'category') {
+                        showCategoryList();
+                    }
+                    
+                }).catch(error => {
+                    console.error('Erreur de chargement:', error);
+                    showNoResults(true);
+                });
+            }
+
+            function checkNewBooks() {
+                const lastVisit = parseInt(localStorage.getItem('lastVisit')) || 0;
+                newBooks = allBooks.filter(book => book.createdAt > lastVisit);
+                
+                if (newBooks.length > 0) {
+                    notificationBadge.textContent = newBooks.length;
+                    notificationBadge.classList.remove('hidden');
+                } else {
+                    notificationBadge.classList.add('hidden');
+                }
+            }
+
+            function checkNewBooksStatus() {
+                // Vérifier quels livres sont encore considérés comme "nouveaux" (moins de 24 heures)
+                const now = Date.now();
+                const twentyFourHours = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+                
+                allBooks.forEach(book => {
+                    const bookAge = now - book.createdAt;
+                    // Si le livre a plus de 24 heures, il n'est plus considéré comme nouveau
+                    if (bookAge > twentyFourHours) {
+                        // Mettre à jour l'affichage si nécessaire
+                        if (currentPage === 'home') {
+                            displayRecentBooks();
+                        }
+                    }
+                });
+            }
+
+            function isBookNew(book) {
+                const now = Date.now();
+                const twentyFourHours = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+                const bookAge = now - book.createdAt;
+                return bookAge <= twentyFourHours;
+            }
+
+            function showNotificationPopup() {
+                // Toujours vérifier les nouveaux livres avant d'afficher le popup
+                const lastVisit = parseInt(localStorage.getItem('lastVisit')) || 0;
+                newBooks = allBooks.filter(book => book.createdAt > lastVisit);
+                
+                if (newBooks.length === 0) {
+                    notificationList.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: #666;">
+                            <i class="fas fa-bell-slash" style="font-size: 32px; margin-bottom: 10px;"></i>
+                            <p style="font-size: 14px;">Aucun nouveau livre</p>
+                        </div>
+                    `;
+                } else {
+                    notificationList.innerHTML = '';
+                    newBooks.forEach(book => {
+                        const notificationItem = document.createElement('div');
+                        notificationItem.className = 'notification-item';
+                        
+                        const date = new Date(book.createdAt);
+                        const timeString = date.toLocaleDateString('fr-FR') + ' à ' + date.toLocaleTimeString('fr-FR', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                        
+                        const isNew = isBookNew(book);
+                        
+                        notificationItem.innerHTML = `
+                            <div class="notification-book-cover" style="background-image: url('${book.image || 'https://via.placeholder.com/40x52?text=No+Image'}')">
+                                ${isNew ? '<div class="notification-new-badge">NOUVEAU</div>' : ''}
+                            </div>
+                            <div class="notification-book-info">
+                                <div class="notification-book-title">${book.title}</div>
+                                <div class="notification-time">Ajouté le ${timeString}</div>
+                            </div>
+                        `;
+                        
+                        notificationItem.addEventListener('click', function() {
+                            openPdf(book);
+                            notificationPopup.style.display = 'none';
+                        });
+                        
+                        notificationList.appendChild(notificationItem);
+                    });
+                }
+            }
+
+            function displayRecentBooks() {
+                const recentBooks = allBooks.slice(0, 12);
+                displayBooksGrid(recentBooks, booksGrid);
+            }
+
+            function showCategoryList() {
+                categoryList.style.display = 'block';
+                categoryBooksGrid.style.display = 'none';
+                backToCategoriesFromList.style.display = 'none';
+                categoryPageTitle.textContent = 'Spécialités Médicales';
+                
+                categoryList.innerHTML = '';
+                
+                if (medicalSpecialties.length === 0) {
+                    categoryList.innerHTML = '<div class="no-results"><p>Aucune spécialité disponible</p></div>';
+                    return;
+                }
+                
+                // Afficher toutes les spécialités médicales (sans "Toutes les spécialités")
+                medicalSpecialties.forEach(specialty => {
+                    const categoryItem = document.createElement('div');
+                    categoryItem.className = 'category-item';
+                    
+                    // Compter les livres pour cette spécialité
+                    const bookCount = allBooks.filter(book => 
+                        (book.category || 'Non classé') === specialty
+                    ).length;
+                    
+                    categoryItem.innerHTML = `
+                        <div class="category-icon">
+                            <i class="fas fa-book-medical"></i>
+                        </div>
+                        <div class="category-info">
+                            <div class="category-name">${specialty}</div>
+                            <div class="category-count">${bookCount} livre(s)</div>
+                        </div>
+                        <div class="category-arrow">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    `;
+                    
+                    categoryItem.addEventListener('click', function() {
+                        showCategoryBooks(specialty);
+                    });
+                    
+                    categoryList.appendChild(categoryItem);
+                });
+            }
+
+            function showCategoryBooks(category) {
+                currentCategory = category;
+                const categoryBooks = allBooks.filter(book => 
+                    (book.category || 'Non classé') === category
+                );
+                
+                categoryList.style.display = 'none';
+                categoryBooksGrid.style.display = 'grid';
+                backToCategoriesFromList.style.display = 'block';
+                categoryPageTitle.textContent = category;
+                
+                displayBooksGrid(categoryBooks, categoryBooksGrid);
+            }
+
+            function displayBookmarks() {
+                const bookmarkedBooks = allBooks.filter(book => bookmarks[book.id]);
+                
+                if (bookmarkedBooks.length === 0) {
+                    bookmarksGrid.innerHTML = '';
+                    noBookmarks.style.display = 'block';
+                } else {
+                    noBookmarks.style.display = 'none';
+                    displayBooksGrid(bookmarkedBooks, bookmarksGrid);
+                }
+            }
+
+            function displayBooksGrid(books, gridElement) {
+                gridElement.innerHTML = '';
+                
+                if (books.length === 0) {
+                    showNoResults(true);
+                    return;
+                }
+                
+                showNoResults(false);
+                
+                books.forEach(book => {
+                    const isBookmarked = bookmarks[book.id];
+                    const isNew = isBookNew(book);
+                    
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    bookCard.innerHTML = `
+                        <div class="book-cover" style="background-image: url('${book.image || 'https://via.placeholder.com/150x200?text=No+Image'}')">
+                            ${isBookmarked ? '<i class="fas fa-bookmark bookmark-icon active"></i>' : ''}
+                            ${isNew ? '<div class="new-badge active">NOUVEAU</div>' : ''}
+                        </div>
+                        <div class="book-info">
+                            <div class="book-title">${book.title}</div>
+                        </div>
+                    `;
+                    
+                    bookCard.addEventListener('click', function() {
+                        openPdf(book);
+                    });
+                    
+                    gridElement.appendChild(bookCard);
+                });
+            }
+
+            function filterBooks() {
+                if (!searchTerm) {
+                    return;
+                }
+                
+                const filteredBooks = allBooks.filter(book => 
+                    book.title.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                
+                if (filteredBooks.length === 0) {
+                    showNoResults(true);
+                    if (currentPage === 'home') {
+                        booksGrid.innerHTML = '';
+                    } else if (currentPage === 'category') {
+                        categoryBooksGrid.innerHTML = '';
+                    }
+                } else {
+                    showNoResults(false);
+                    if (currentPage === 'home') {
+                        displayBooksGrid(filteredBooks, booksGrid);
+                    } else if (currentPage === 'category') {
+                        displayBooksGrid(filteredBooks, categoryBooksGrid);
+                    }
+                }
+            }
+
+            function showNoResults(show) {
+                if (show) {
+                    noResults.style.display = 'block';
+                    if (searchTerm) {
+                        noResults.innerHTML = `
+                            <i class="fas fa-search"></i>
+                            <h3>Aucun livre trouvé</h3>
+                            <p>Aucun livre ne correspond à "${searchTerm}"</p>
+                        `;
+                    } else if (currentCategory) {
+                        noResults.innerHTML = `
+                            <i class="fas fa-folder-open"></i>
+                            <h3>Aucun livre dans cette spécialité</h3>
+                            <p>La spécialité "${currentCategory}" ne contient aucun livre</p>
+                        `;
+                    }
+                } else {
+                    noResults.style.display = 'none';
+                }
+            }
+
+            function openPdf(book) {
+                currentBook = book;
+                
+                let pdfUrl = book.pdf;
+                if (pdfUrl.includes('drive.google.com')) {
+                    const fileIdMatch = pdfUrl.match(/\/d\/([^\/]+)/);
+                    if (fileIdMatch) {
+                        pdfUrl = `https://drive.google.com/file/d/${fileIdMatch[1]}/preview`;
+                    }
+                }
+                
+                pdfTitle.textContent = book.title;
+                pdfFrame.src = pdfUrl;
+                pdfViewer.style.display = 'flex';
+                
+                bookmarkPdf.className = bookmarks[book.id] ? 
+                    'fas fa-bookmark' : 'far fa-bookmark';
+            }
+
+            function toggleBookmark(bookId) {
+                if (bookmarks[bookId]) {
+                    delete bookmarks[bookId];
+                    bookmarkPdf.className = 'far fa-bookmark';
+                } else {
+                    bookmarks[bookId] = true;
+                    bookmarkPdf.className = 'fas fa-bookmark';
+                }
+                
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                
+                if (currentPage === 'home') {
+                    if (currentCategory) {
+                        const categoryBooks = allBooks.filter(book => 
+                            (book.category || 'Non classé') === currentCategory
+                        );
+                        displayBooksGrid(categoryBooks, booksGrid);
+                    } else {
+                        displayRecentBooks();
+                    }
+                } else if (currentPage === 'category' && categoryBooksGrid.style.display === 'grid') {
+                    const categoryBooks = allBooks.filter(book => 
+                        (book.category || 'Non classé') === currentCategory
+                    );
+                    displayBooksGrid(categoryBooks, categoryBooksGrid);
+                } else if (currentPage === 'bookmarks') {
+                    displayBookmarks();
+                }
+            }
+
+            // Écouter les nouveaux livres en temps réel
+            database.ref('books').on('child_added', function(snapshot) {
+                loadBooks();
+            });
+        });
+    </script>
+</body>
+</html>
